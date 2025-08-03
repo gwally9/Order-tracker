@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #191970 0%, #1e3a8a 25%, #1e40af 50%, #1d4ed8 75%, #2563eb 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input, select, textarea {
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.4);
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .item-tile {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .item-tile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .vendor-badge {
+            position: absolute;
+            top: -10px;
+            right: 15px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .item-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin: 15px 0 10px 0;
+            line-height: 1.3;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 8px;
+        }
+
+        .status-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .status-value {
+            font-weight: 500;
+        }
+
+        .status-yes {
+            color: #004225;
+            font-weight: 600;
+        }
+
+        .status-no {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .delete-btn, .edit-btn {
+            position: absolute;
+            color: white;
+            border: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.8;
+            transition: all 0.2s ease;
+        }
+
+        .delete-btn {
+            bottom: 10px;
+            left: 10px;
+            background: #ef4444;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        }
+
+        .edit-btn {
+            bottom: 10px;
+            left: 35px;
+            background: #1d4ed8;
+            box-shadow: 0 2px 8px rgba(29, 78, 216, 0.3);
+        }
+
+        .delete-btn:hover, .edit-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .delete-btn:hover {
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+        .edit-btn:hover {
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 18px;
+            margin: 50px 0;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .items-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Order Tracker</h1>
+        
+        <div class="form-container">
+            <form id="orderForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="vendor">Vendor</label>
+                        <select id="vendor" required>
+                            <option value="">Select Vendor</option>
+                            <option value="amazon">Amazon</option>
+                            <option value="temu">Temu</option>
+                            <option value="alibaba">Alibaba</option>
+                            <option value="shein">Shein</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="item">Item Name/Description</label>
+                        <textarea id="item" placeholder="Enter item description..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="received">
+                            <label for="received">Received</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="returned">
+                            <label for="returned">Returned</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="returnedVia">Returned Via</label>
+                        <select id="returnedVia">
+                            <option value="none">None/N/A</option>
+                            <option value="usps">USPS</option>
+                            <option value="ups">UPS</option>
+                            <option value="wholefood">Whole Foods</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dateReturned">Date Returned</label>
+                        <input type="date" id="dateReturned">
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="refundReceived">
+                            <label for="refundReceived">Refund Received</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="add-btn" id="submitBtn">Add Order</button>
+                <button type="button" class="add-btn" id="cancelEditBtn" style="display: none; background: #6b7280; margin-top: 10px;">Cancel Edit</button>
+            </form>
+        </div>
+
+        <div id="itemsContainer" class="items-grid"></div>
+        <div id="emptyState" class="empty-state" style="display: none;">
+            No orders tracked yet. Add your first order above! 🛍️
+        </div>
+    </div>
+
+    <script>
+        // IndexedDB setup
+        let db;
+        const dbName = 'OrderTracker';
+        const dbVersion = 1;
+        const storeName = 'orders';
+
+        // Initialize database
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(dbName, dbVersion);
+                
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve(db);
+                };
+                
+                request.onupgradeneeded = (event) => {
+                    db = event.target.result;
+                    if (!db.objectStoreNames.contains(storeName)) {
+                        const store = db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
+                        store.createIndex('vendor', 'vendor', { unique: false });
+                        store.createIndex('item', 'item', { unique: false });
+                    }
+                };
+            });
+        }
+
+        // Add order to database
+        function addOrder(orderData) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.add(orderData);
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // Get all orders
+        function getAllOrders() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const request = store.getAll();
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // Update order in database
+        function updateOrder(id, orderData) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                orderData.id = id; // Ensure the ID is set
+                const request = store.put(orderData);
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // Get single order
+        function getOrder(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const request = store.get(id);
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+        function deleteOrder(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.delete(id);
+                
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // Create order tile HTML
+        function createOrderTile(order) {
+            const vendorColors = {
+                amazon: '#14b8a6',
+                temu: '#ff8c00',
+                alibaba: '#dc2626',
+                shein: '#1f2937',
+                other: '#16a34a'
+            };
+
+            return `
+                <div class="item-tile">
+                    <button class="delete-btn" onclick="removeOrder(${order.id})">×</button>
+                    <button class="edit-btn" onclick="editOrder(${order.id})">✎</button>
+                    <div class="vendor-badge" style="background: ${vendorColors[order.vendor] || vendorColors.other}">
+                        ${order.vendor.toUpperCase()}
+                    </div>
+                    <div class="item-name">${order.item}</div>
+                    
+                    <div class="status-row">
+                        <span class="status-label">Received:</span>
+                        <span class="status-value ${order.received ? 'status-yes' : 'status-no'}">
+                            ${order.received ? 'Yes' : 'No'}
+                        </span>
+                    </div>
+                    
+                    <div class="status-row">
+                        <span class="status-label">Returned:</span>
+                        <span class="status-value ${order.returned ? 'status-yes' : 'status-no'}">
+                            ${order.returned ? 'Yes' : 'No'}
+                        </span>
+                    </div>
+                    
+                    ${order.returned ? `
+                        <div class="status-row">
+                            <span class="status-label">Date Returned:</span>
+                            <span class="status-value">${order.dateReturned ? new Date(order.dateReturned).toLocaleDateString() : 'Not specified'}</span>
+                        </div>
+                        
+                        <div class="status-row">
+                            <span class="status-label">Returned Via:</span>
+                            <span class="status-value">${order.returnedVia.toUpperCase()}</span>
+                        </div>
+                        
+                        <div class="status-row">
+                            <span class="status-label">Refund Received:</span>
+                            <span class="status-value ${order.refundReceived ? 'status-yes' : 'status-no'}">
+                                ${order.refundReceived ? 'Yes' : 'No'}
+                            </span>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Display all orders
+        async function displayOrders() {
+            try {
+                const orders = await getAllOrders();
+                const container = document.getElementById('itemsContainer');
+                const emptyState = document.getElementById('emptyState');
+                
+                if (orders.length === 0) {
+                    container.innerHTML = '';
+                    emptyState.style.display = 'block';
+                } else {
+                    emptyState.style.display = 'none';
+                    container.innerHTML = orders.map(createOrderTile).join('');
+                }
+            } catch (error) {
+                console.error('Error displaying orders:', error);
+            }
+        }
+
+        // Global variable to track edit mode
+        let editingOrderId = null;
+
+        // Edit order function
+        async function editOrder(id) {
+            try {
+                const order = await getOrder(id);
+                if (!order) {
+                    alert('Order not found');
+                    return;
+                }
+
+                // Populate form with existing data
+                document.getElementById('vendor').value = order.vendor;
+                document.getElementById('item').value = order.item;
+                document.getElementById('received').checked = order.received;
+                document.getElementById('returned').checked = order.returned;
+                document.getElementById('returnedVia').value = order.returnedVia || 'none';
+                document.getElementById('dateReturned').value = order.dateReturned || '';
+                document.getElementById('refundReceived').checked = order.refundReceived;
+
+                // Switch to edit mode
+                editingOrderId = id;
+                document.getElementById('submitBtn').textContent = 'Update Order';
+                document.getElementById('cancelEditBtn').style.display = 'block';
+
+                // Scroll to form
+                document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                console.error('Error loading order for edit:', error);
+                alert('Error loading order. Please try again.');
+            }
+        }
+
+        // Cancel edit function
+        function cancelEdit() {
+            editingOrderId = null;
+            document.getElementById('submitBtn').textContent = 'Add Order';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+            document.getElementById('orderForm').reset();
+        }
+
+        // Remove order
+        async function removeOrder(id) {
+            if (confirm('Are you sure you want to delete this order?')) {
+                try {
+                    await deleteOrder(id);
+                    displayOrders();
+                } catch (error) {
+                    console.error('Error deleting order:', error);
+                    alert('Error deleting order. Please try again.');
+                }
+            }
+        }
+
+        // Form submission
+        document.getElementById('orderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const orderData = {
+                vendor: document.getElementById('vendor').value,
+                item: document.getElementById('item').value,
+                received: document.getElementById('received').checked,
+                returned: document.getElementById('returned').checked,
+                returnedVia: document.getElementById('returnedVia').value,
+                dateReturned: document.getElementById('dateReturned').value,
+                refundReceived: document.getElementById('refundReceived').checked,
+                dateAdded: editingOrderId ? undefined : new Date().toISOString() // Don't update dateAdded when editing
+            };
+
+            try {
+                if (editingOrderId) {
+                    // Update existing order
+                    await updateOrder(editingOrderId, orderData);
+                    cancelEdit();
+                } else {
+                    // Add new order
+                    orderData.dateAdded = new Date().toISOString();
+                    await addOrder(orderData);
+                    e.target.reset();
+                }
+                displayOrders();
+            } catch (error) {
+                console.error('Error saving order:', error);
+                alert('Error saving order. Please try again.');
+            }
+        });
+
+        // Cancel edit button
+        document.getElementById('cancelEditBtn').addEventListener('click', cancelEdit);
+
+        // Handle return checkbox logic
+        document.getElementById('returned').addEventListener('change', (e) => {
+            const returnedViaSelect = document.getElementById('returnedVia');
+            const dateReturnedInput = document.getElementById('dateReturned');
+            const refundCheckbox = document.getElementById('refundReceived');
+            
+            if (!e.target.checked) {
+                returnedViaSelect.value = 'none';
+                dateReturnedInput.value = '';
+                refundCheckbox.checked = false;
+            }
+        });
+
+        // Initialize app
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await initDB();
+                displayOrders();
+            } catch (error) {
+                console.error('Error initializing database:', error);
+                alert('Error initializing database. Please refresh the page.');
+            }
+        });
+    </script>
+</body>
+</html>
