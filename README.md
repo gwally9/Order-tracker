@@ -11,3 +11,5 @@ The data is in a Local Database Storage: Uses IndexedDB (built into browsers) to
 <br>Effort could be made to connect to a more robust back-end, but this was a simple design.
 
 
+Example of application:<br>
+<img src="https://github.com/gwally9/Order-tracker/blob/main/Example.png">
