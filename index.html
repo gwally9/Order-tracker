@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<!--
+    Order Tracking System
+    2025-Aug gwally9 - copyright adheres to Apache 2.0 copyright alignment
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Order Tracker</h1>
+        
+        <div class="form-container">
+            <form id="orderForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="vendor">Vendor</label>
+                        <select id="vendor" required>
+                            <option value="">Select Vendor</option>
+                            <option value="amazon">Amazon</option>
+                            <option value="temu">Temu</option>
+                            <option value="alibaba">Alibaba</option>
+                            <option value="shein">Shein</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="item">Item Name/Description</label>
+                        <textarea id="item" placeholder="Enter item description..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="received">
+                            <label for="received">Received</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="returned">
+                            <label for="returned">Returned</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="returnedVia">Returned Via</label>
+                        <select id="returnedVia">
+                            <option value="none">None/N/A</option>
+                            <option value="usps">USPS</option>
+                            <option value="ups">UPS</option>
+                            <option value="wholefood">Whole Foods</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dateReturned">Date Returned</label>
+                        <input type="date" id="dateReturned">
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="refundReceived">
+                            <label for="refundReceived">Refund Received</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="add-btn" id="submitBtn">Add Order</button>
+                <button type="button" class="add-btn" id="cancelEditBtn" style="display: none; background: #6b7280; margin-top: 10px;">Cancel Edit</button>
+            </form>
+        </div>
+
+        <div id="itemsContainer" class="items-grid"></div>
+        <div id="emptyState" class="empty-state" style="display: none;">
+            No orders tracked yet. Add your first order above! 🛍️
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px; padding: 20px; color: rgba(255, 255, 255, 0.6); font-size: 12px;">
+            All Content © 2025 - glwallac
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
